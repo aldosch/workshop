@@ -11,6 +11,7 @@ import {
 import { CodeBlock, InlineCode } from "@/components/code-block";
 import { CopyButton } from "@/components/copy-button";
 import { DocLink } from "@/components/doc-link";
+import { QaPipelineDiagram } from "@/components/qa-pipeline-diagram";
 import {
   Accordion,
   AccordionContent,
@@ -574,6 +575,53 @@ export default async function Page() {
             </li>
           ))}
         </ol>
+
+        <section
+          id="qa-pipeline-diagram"
+          className="scroll-mt-8 rounded-xl border bg-card p-5"
+        >
+          <div className="mb-4 flex items-start gap-3">
+            <h2 className="flex-1 font-medium text-base leading-snug sm:text-lg">
+              Where should tests and QA agents fire?
+            </h2>
+            <span className="shrink-0 self-start rounded-md border border-sky-500/30 bg-sky-500/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider leading-snug text-sky-800 dark:text-sky-300">
+              Testing · QA
+            </span>
+            <a
+              href="#qa-pipeline-diagram"
+              className="shrink-0 self-start font-mono text-muted-foreground text-xs leading-snug tabular-nums hover:text-foreground sm:text-sm sm:leading-snug"
+              aria-label="Link to QA pipeline diagram"
+            >
+              S7
+            </a>
+          </div>
+          <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+            Every stage where a test or QA agent could fire in a Next.js +
+            Turborepo monorepo on Vercel. Hover or tap a node to see the test
+            types that belong there. Particles flow left to right through the
+            pipeline — from instant code-level checks to production monitoring.
+          </p>
+          <QaPipelineDiagram />
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
+            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+              Docs
+            </span>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+              <DocLink href="https://vercel.com/docs/fundamentals/builds">
+                Vercel Builds
+              </DocLink>
+              <DocLink href="https://vercel.com/docs/deployments/environments">
+                Environments
+              </DocLink>
+              <DocLink href="https://vercel.com/docs/deployment-checks">
+                Deployment Checks
+              </DocLink>
+              <DocLink href="https://vercel.com/docs/deployments/promote-preview-to-production">
+                Promote to Production
+              </DocLink>
+            </div>
+          </div>
+        </section>
 
         {flags.betaAnalytics && (
           <section className="mt-8 rounded-xl border border-violet-500/30 bg-violet-500/5 p-5">
