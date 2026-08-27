@@ -230,10 +230,17 @@
 .shiki-wrapper code {
   display: inline-block;
   min-width: 100%;
+  /* Collapse the newline text nodes Shiki emits between line spans. With
+     `pre` they'd each render as an extra empty line box now that lines are
+     block-level, doubling the row spacing. */
+  white-space: normal;
 }
 
 .shiki-wrapper .line {
   display: block;
+  white-space: pre;
+  /* Blank lines have no content, so give them an explicit row height. */
+  min-height: 1lh;
   padding-inline: 1rem;
 }
 

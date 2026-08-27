@@ -92,7 +92,7 @@ export async function CodeBlock({
       )}
       <div
         className={cn(
-          "shiki-wrapper overflow-x-auto py-3 font-mono text-[13px] leading-relaxed",
+          "shiki-wrapper overflow-x-auto py-3 font-mono text-[13px] leading-normal",
           "[&_pre]:!bg-transparent [&_pre]:m-0 [&_pre]:p-0 [&_code]:!bg-transparent [&_span]:!bg-transparent",
         )}
         // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki output is sanitized HTML.
