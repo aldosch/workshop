@@ -497,15 +497,11 @@ export default async function Page() {
   },
   {
     slug: "visual-diff-testing",
-    title: <>Visual diff testing for UI regressions</>,
+    title: <>Visual diff testing</>,
     categories: ["Testing"],
     content: (
       <>
-        <p>
-          Visual regression tools snapshot your pages and diff them against a
-          baseline. They catch pixel-level changes that unit tests miss.
-        </p>
-        <p className="mt-6">Options for Next.js:</p>
+        <p className="mt-6">Popular options for Next.js:</p>
         <ul className="mt-3 space-y-2">
           <li>
             <strong>Playwright</strong> —{" "}
