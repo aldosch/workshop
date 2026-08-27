@@ -21,7 +21,7 @@ export const CATEGORY_STYLES: Record<Category, string> = {
   Build: "text-zinc-600 dark:text-zinc-400",
 };
 
-export const TOTAL_SLIDES = 11;
+export const TOTAL_SLIDES = 12;
 
 const GH =
   "https://github.com/aldosch/workshop/blob/main/packages/flags/examples";
@@ -335,6 +335,75 @@ export const slides: Slide[] = [
         <Docs>
           <DocLink href="https://turbo.build/docs/guides/sharing-code">
             Sharing code in Turborepo
+          </DocLink>
+        </Docs>
+      </>
+    ),
+  },
+  {
+    slug: "flags-using",
+    title: <>Using flags in your apps</>,
+    categories: ["Flags"],
+    content: (
+      <>
+        <p>
+          The server evaluates flags and passes resolved booleans to the client
+          via <InlineCode>&lt;FlagsProvider&gt;</InlineCode>. Client components
+          call <InlineCode>useFlag()</InlineCode> — no{" "}
+          <InlineCode>process.env</InlineCode> access, no flicker.
+        </p>
+
+        <div className="grid gap-4 lg:grid-cols-2 mt-8">
+          <div>
+            <p className="mb-2 font-mono text-xs text-muted-foreground uppercase tracking-wider">
+              Server — evaluate once
+            </p>
+            <CodeBlock
+              language="tsx"
+              filename="app/layout.tsx"
+              highlightLines={[3, 5]}
+            >{`import { getFlags } from "@repo/flags";
+import { FlagsProvider } from "@repo/flags/react";
+// server evaluates, client never sees env
+export default function Layout({ children }) {
+  const flags = getFlags();
+  return (
+    <FlagsProvider value={flags}>
+      {children}
+    </FlagsProvider>
+  );
+}`}</CodeBlock>
+          </div>
+          <div>
+            <p className="mb-2 font-mono text-xs text-muted-foreground uppercase tracking-wider">
+              Client — read a flag
+            </p>
+            <CodeBlock
+              language="tsx"
+              filename="components/Search.tsx"
+              highlightLines={[3, 5]}
+            >{`"use client";
+import { useFlag } from "@repo/flags/react";
+// just a boolean — no env, no flicker
+export function Search() {
+  const ai = useFlag("experimentalSearch");
+  return ai ? <AISearch /> : <StandardSearch />;
+}`}</CodeBlock>
+          </div>
+        </div>
+
+        <p className="mt-6 text-muted-foreground">
+          Both apps in this monorepo — slides and demo — import from the same{" "}
+          <InlineCode>@repo/flags</InlineCode> package. Add a flag once, it's
+          available everywhere.
+        </p>
+
+        <Docs>
+          <DocLink href="https://github.com/aldosch/workshop/blob/main/apps/demo/src/app/page.tsx">
+            demo app usage
+          </DocLink>
+          <DocLink href="https://github.com/aldosch/workshop/blob/main/packages/flags/src/react.tsx">
+            FlagsProvider + useFlag source
           </DocLink>
         </Docs>
       </>
