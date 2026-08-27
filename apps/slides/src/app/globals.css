@@ -131,10 +131,45 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-size: 15px;
+    line-height: 1.6;
+    -moz-osx-font-smoothing: grayscale;
   }
   html {
     @apply font-sans;
   }
+
+  h1 {
+    @apply text-4xl font-semibold tracking-tight;
+    line-height: 1.15;
+  }
+  h2 {
+    @apply text-2xl font-semibold tracking-tight;
+    line-height: 1.25;
+  }
+}
+
+/* Slide-inspired guide lines — subtle frame at the viewport edges */
+.slide-frame {
+  position: relative;
+}
+.slide-frame::before,
+.slide-frame::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+.slide-frame::before {
+  left: max(1.5rem, 5%);
+}
+.slide-frame::after {
+  right: max(1.5rem, 5%);
 }
 
 /* ---------------------------------------------------------------------------

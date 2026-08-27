@@ -421,24 +421,24 @@ export default async function Page() {
   const flags = getFlags();
 
   return (
-    <div className="min-h-svh bg-background text-foreground">
-      <main className="mx-auto max-w-2xl px-5 py-16 sm:py-24">
-        <header className="mb-10">
+    <div className="slide-frame min-h-svh bg-background text-foreground">
+      <main className="mx-auto px-6 py-20 sm:px-12 lg:px-20 xl:px-24 xl:py-28">
+        <header className="mb-16">
           <Badge
             variant="outline"
-            className="mb-5 font-mono text-[11px] tracking-wider"
+            className="mb-6 font-mono text-[11px] tracking-wider"
           >
             WORKSHOP · CHANGE MANAGEMENT &amp; BUILD OPTIMISATION
           </Badge>
-          <h1 className="text-balance font-semibold text-3xl tracking-tight sm:text-4xl">
+          <h1 className="text-balance font-semibold text-4xl tracking-tight sm:text-5xl xl:text-6xl">
             Heidi Health — 2026-08-27
           </h1>
-          <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
+          <p className="mt-4 max-w-2xl text-base text-muted-foreground leading-relaxed sm:text-lg">
             Workshop notes covering feature flags, visual diff testing, QA
             pipelines, rollouts with auto-rollback, and build optimisation in a
             Turborepo monorepo.
           </p>
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-6 flex flex-wrap gap-2">
             <Badge variant="secondary" className="gap-1">
               <Flag aria-hidden="true" className="size-3" />
               {Object.keys(flagDefinitions).length} flags defined
@@ -453,15 +453,15 @@ export default async function Page() {
           </div>
         </header>
 
-        <ol className="space-y-3">
+        <ol className="space-y-4">
           {sections.map((section, i) => (
             <li
               key={section.id}
               id={section.slug}
-              className="scroll-mt-8 rounded-xl border bg-card p-5 transition-colors"
+              className="scroll-mt-8 rounded-xl border bg-card p-6 transition-colors sm:p-8 xl:p-10"
             >
-              <div className="mb-4 flex items-start gap-3">
-                <h2 className="flex-1 font-medium text-base leading-snug sm:text-lg">
+              <div className="mb-6 flex items-start gap-4">
+                <h2 className="flex-1 font-medium text-lg leading-snug sm:text-xl xl:text-2xl">
                   {section.title}
                 </h2>
                 <div className="flex shrink-0 flex-wrap justify-end gap-1.5 self-start">
@@ -485,24 +485,24 @@ export default async function Page() {
                   S{i + 1}
                 </a>
               </div>
-              <div className="space-y-3 text-sm leading-relaxed">
+              <div className="space-y-4 text-sm leading-relaxed sm:text-base">
                 {section.what}
               </div>
 
-              <Accordion multiple className="mt-4 border-t pt-1">
+              <Accordion multiple className="mt-6 border-t pt-2">
                 {section.details && (
                   <AccordionItem
                     value={`${section.id}-details`}
                     className="border-b-0!"
                   >
-                    <AccordionTrigger className="cursor-pointer py-2 font-medium text-muted-foreground text-xs uppercase tracking-wider hover:text-foreground hover:no-underline">
+                    <AccordionTrigger className="cursor-pointer py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider hover:text-foreground hover:no-underline">
                       <span className="flex items-center gap-2">
                         <CircleHelp aria-hidden="true" className="size-3.5" />
                         Details
                       </span>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <div className="pt-1 text-muted-foreground text-sm leading-relaxed">
+                      <div className="pt-2 text-muted-foreground text-sm leading-relaxed sm:text-base">
                         {section.details}
                       </div>
                     </AccordionContent>
@@ -514,7 +514,7 @@ export default async function Page() {
                     value={`${section.id}-code`}
                     className="border-b-0!"
                   >
-                    <AccordionTrigger className="cursor-pointer py-2 font-medium text-muted-foreground text-xs uppercase tracking-wider hover:text-foreground hover:no-underline">
+                    <AccordionTrigger className="cursor-pointer py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider hover:text-foreground hover:no-underline">
                       <span className="flex items-center gap-2">
                         <SquareTerminal
                           aria-hidden="true"
@@ -524,7 +524,7 @@ export default async function Page() {
                       </span>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <div className="space-y-3 pt-1">
+                      <div className="space-y-4 pt-2">
                         {section.codeExample}
                       </div>
                     </AccordionContent>
@@ -536,7 +536,7 @@ export default async function Page() {
                     value={`${section.id}-prompt`}
                     className="border-b-0!"
                   >
-                    <AccordionTrigger className="cursor-pointer py-2 font-medium text-muted-foreground text-xs uppercase tracking-wider hover:text-foreground hover:no-underline">
+                    <AccordionTrigger className="cursor-pointer py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider hover:text-foreground hover:no-underline">
                       <span className="flex items-center gap-2">
                         <SquareTerminal
                           aria-hidden="true"
@@ -546,7 +546,7 @@ export default async function Page() {
                       </span>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <div className="pt-1">
+                      <div className="pt-2">
                         <PromptBlock text={section.prompt} />
                       </div>
                     </AccordionContent>
@@ -558,14 +558,14 @@ export default async function Page() {
                     value={`${section.id}-verify`}
                     className="border-b-0!"
                   >
-                    <AccordionTrigger className="cursor-pointer py-2 font-medium text-muted-foreground text-xs uppercase tracking-wider hover:text-foreground hover:no-underline">
+                    <AccordionTrigger className="cursor-pointer py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider hover:text-foreground hover:no-underline">
                       <span className="flex items-center gap-2">
                         <CircleCheck aria-hidden="true" className="size-3.5" />
                         Verify
                       </span>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <div className="pt-1 text-muted-foreground text-sm leading-relaxed">
+                      <div className="pt-2 text-muted-foreground text-sm leading-relaxed sm:text-base">
                         {section.verify}
                       </div>
                     </AccordionContent>
@@ -578,10 +578,10 @@ export default async function Page() {
 
         <section
           id="qa-pipeline-diagram"
-          className="scroll-mt-8 rounded-xl border bg-card p-5"
+          className="mt-4 scroll-mt-8 rounded-xl border bg-card p-6 sm:p-8 xl:p-10"
         >
-          <div className="mb-4 flex items-start gap-3">
-            <h2 className="flex-1 font-medium text-base leading-snug sm:text-lg">
+          <div className="mb-6 flex items-start gap-4">
+            <h2 className="flex-1 font-medium text-lg leading-snug sm:text-xl xl:text-2xl">
               Where should tests and QA agents fire?
             </h2>
             <span className="shrink-0 self-start rounded-md border border-sky-500/30 bg-sky-500/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider leading-snug text-sky-800 dark:text-sky-300">
@@ -595,14 +595,14 @@ export default async function Page() {
               S7
             </a>
           </div>
-          <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+          <p className="mb-6 text-sm leading-relaxed text-muted-foreground sm:text-base">
             Every stage where a test or QA agent could fire in a Next.js +
             Turborepo monorepo on Vercel. Hover or tap a node to see the test
             types that belong there. Particles flow left to right through the
             pipeline — from instant code-level checks to production monitoring.
           </p>
           <QaPipelineDiagram />
-          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 pt-2">
             <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
               Docs
             </span>
@@ -624,15 +624,15 @@ export default async function Page() {
         </section>
 
         {flags.betaAnalytics && (
-          <section className="mt-8 rounded-xl border border-violet-500/30 bg-violet-500/5 p-5">
-            <h2 className="mb-2 flex items-center gap-2 font-medium text-base">
+          <section className="mt-4 rounded-xl border border-violet-500/30 bg-violet-500/5 p-6 sm:p-8">
+            <h2 className="mb-3 flex items-center gap-2 font-medium text-lg sm:text-xl">
               <span
                 aria-hidden="true"
                 className="inline-block size-1.5 rounded-full bg-violet-500"
               />
               Bonus: betaAnalytics flag is ON
             </h2>
-            <p className="text-muted-foreground text-sm leading-relaxed">
+            <p className="text-muted-foreground text-sm leading-relaxed sm:text-base">
               This section only renders because{" "}
               <InlineCode>FLAGS_BETA_ANALYTICS=true</InlineCode> is set in the
               environment. The slides app itself uses{" "}
@@ -642,8 +642,10 @@ export default async function Page() {
           </section>
         )}
 
-        <section className="mt-12 rounded-xl border bg-card p-5">
-          <h2 className="mb-2 font-medium text-base">Workshop structure</h2>
+        <section className="mt-4 rounded-xl border bg-card p-6 sm:p-8 xl:p-10">
+          <h2 className="mb-4 font-medium text-lg sm:text-xl">
+            Workshop structure
+          </h2>
           <CodeBlock language="text" filename="monorepo layout">{`workshop/
 ├── apps/
 │   ├── slides/     ← this app (workshop notes)
@@ -656,7 +658,7 @@ export default async function Page() {
 └── package.json`}</CodeBlock>
         </section>
 
-        <footer className="mt-12 flex items-center justify-between text-muted-foreground text-xs">
+        <footer className="mt-16 flex items-center justify-between text-muted-foreground text-xs sm:text-sm">
           <span className="flex items-center gap-1.5">
             <Wrench aria-hidden="true" className="size-3" />
             workshop · pnpm + turbo + next.js
