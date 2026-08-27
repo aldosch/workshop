@@ -20,12 +20,257 @@ export const CATEGORY_STYLES: Record<Category, string> = {
   Build: "text-zinc-600 dark:text-zinc-400",
 };
 
-export const TOTAL_SLIDES = 8;
+export const TOTAL_SLIDES = 11;
 
 const GH =
   "https://github.com/aldosch/workshop/blob/main/packages/flags/examples";
 
 export const slides: Slide[] = [
+  {
+    slug: "build-cost-what",
+    title: <>Build minutes: what's happening?</>,
+    categories: ["Build"],
+    content: (
+      <>
+        <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <p className="text-2xl font-semibold sm:text-3xl">
+              $13.4k on builds this month
+            </p>
+            <p className="mt-3 text-lg text-muted-foreground">
+              One project — <InlineCode>scribe-fe-v2-dev</InlineCode> — accounts
+              for <strong className="text-foreground">$11.3k</strong> of that.
+            </p>
+          </div>
+          <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 px-6 py-4 text-center">
+            <p className="font-mono text-3xl font-bold text-amber-600 dark:text-amber-400">
+              73%
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              of $18.2k total usage
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-10 space-y-3">
+          <p className="font-medium">Usage breakdown (Aug 1–27)</p>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b text-left text-muted-foreground">
+                <th className="pb-2 font-medium">Service</th>
+                <th className="pb-2 text-right font-medium">Cost</th>
+                <th className="pb-2 text-right font-medium">Share</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              <tr className="bg-amber-500/5">
+                <td className="py-2.5 font-medium">Build CPU Minutes</td>
+                <td className="py-2.5 text-right font-mono">$13,392</td>
+                <td className="py-2.5 text-right font-mono text-amber-600 dark:text-amber-400">
+                  73%
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2.5">Fast Data Transfer</td>
+                <td className="py-2.5 text-right font-mono">$2,529</td>
+                <td className="py-2.5 text-right font-mono text-muted-foreground">
+                  14%
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2.5">Edge Requests</td>
+                <td className="py-2.5 text-right font-mono">$1,435</td>
+                <td className="py-2.5 text-right font-mono text-muted-foreground">
+                  8%
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2.5">Everything else</td>
+                <td className="py-2.5 text-right font-mono">$925</td>
+                <td className="py-2.5 text-right font-mono text-muted-foreground">
+                  5%
+                </td>
+              </tr>
+              <tr className="border-t-2 font-medium">
+                <td className="pt-2.5">Total</td>
+                <td className="pt-2.5 text-right font-mono">$18,281</td>
+                <td className="pt-2.5 text-right font-mono">100%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p className="mt-8 text-muted-foreground">
+          Build CPU was{" "}
+          <strong className="text-foreground">$0 every day</strong> from March 1
+          through April 26. First non-zero day:{" "}
+          <InlineCode>2026-04-27</InlineCode>. Sustained ~640 MIUs/day since.
+        </p>
+      </>
+    ),
+  },
+  {
+    slug: "build-cost-why",
+    title: <>Build minutes: why is it so expensive?</>,
+    categories: ["Build"],
+    content: (
+      <>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div className="space-y-1">
+            <p className="font-medium text-lg">12 GB heap</p>
+            <p className="text-muted-foreground">
+              <InlineCode>--max-old-space-size=12228</InlineCode> forces the
+              highest-memory build tier (30 cores / 60 GB). CPU minutes are
+              billed by tier. Baked into{" "}
+              <InlineCode>scripts/build-next.ts</InlineCode> — a repo change,
+              not a dashboard toggle.
+            </p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium text-lg">No build cache</p>
+            <p className="text-muted-foreground">
+              <InlineCode>VERCEL_FORCE_NO_BUILD_CACHE</InlineCode> is set on dev
+              projects. Every build downloads 14,828 files and reinstalls 2,719
+              packages from scratch. ~10.5 min per build, all cold.
+            </p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium text-lg">100 pushes in 2 hours</p>
+            <p className="text-muted-foreground">
+              29 authors merging PRs continuously. Up to 6 concurrent builds.
+              Every push triggers a full 12 GB, 10-minute build — no ignored
+              build step configured.
+            </p>
+          </div>
+          <div className="space-y-1">
+            <p className="font-medium text-lg">
+              No <InlineCode>nx affected</InlineCode>
+            </p>
+            <p className="text-muted-foreground">
+              Build command is <InlineCode>next build</InlineCode>, not{" "}
+              <InlineCode>nx affected run build</InlineCode>. 34 workspace
+              projects, 3,570 static pages — all compiled every time even when
+              one app changed.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-8 rounded-lg border border-amber-500/20 bg-amber-500/5 p-5">
+          <p className="text-sm text-muted-foreground">
+            <strong className="text-foreground">Build timeline</strong> (recent
+            production build): install ~16s · compile/bundle ~5.8 min (where 12
+            GB is consumed) · static pages ~62s · sourcemaps ~207s ={" "}
+            <strong className="text-foreground">~10.7 min total</strong>
+          </p>
+        </div>
+
+        <p className="mt-6 text-muted-foreground">
+          91 projects total, 26+ are <InlineCode>scribe-fe-v2</InlineCode>{" "}
+          variants across regions. But only <InlineCode>-dev</InlineCode> builds
+          on every push — prod/staging variants consume ~36 MIUs each (350×
+          less).
+        </p>
+      </>
+    ),
+  },
+  {
+    slug: "build-cost-fix",
+    title: <>Build minutes: what can we do?</>,
+    categories: ["Build"],
+    content: (
+      <>
+        <div className="space-y-6">
+          <div className="flex items-start gap-4">
+            <span className="mt-1 font-mono text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+              1
+            </span>
+            <div>
+              <p className="font-medium text-lg">
+                Remove <InlineCode>VERCEL_FORCE_NO_BUILD_CACHE</InlineCode>
+              </p>
+              <p className="text-muted-foreground">
+                Single safest win. Enables build cache for dev — skips redundant
+                install + compilation for unchanged code. Zero OOM risk. Could
+                cut dev build time by 50–70% for incremental pushes.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <span className="mt-1 font-mono text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+              2
+            </span>
+            <div>
+              <p className="font-medium text-lg">
+                Test <InlineCode>--max-old-space-size=8192</InlineCode>
+              </p>
+              <p className="text-muted-foreground">
+                If the build completes at 8 GB, it moves to a cheaper instance
+                tier (~30–40% cost reduction). No OOM errors in recent failed
+                builds — 12 GB may be historical. Test on a preview deployment
+                first.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <span className="mt-1 font-mono text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+              3
+            </span>
+            <div>
+              <p className="font-medium text-lg">Add an Ignored Build Step</p>
+              <p className="text-muted-foreground">
+                Skip builds for <InlineCode>*.md</InlineCode>,{" "}
+                <InlineCode>*.test.*</InlineCode>,{" "}
+                <InlineCode>docs/</InlineCode>,{" "}
+                <InlineCode>.storybook/</InlineCode>. Could eliminate 20–40% of
+                builds triggered by non-functional changes.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <span className="mt-1 font-mono text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+              4
+            </span>
+            <div>
+              <p className="font-medium text-lg">
+                Add <InlineCode>nx affected</InlineCode> to the build command
+              </p>
+              <p className="text-muted-foreground">
+                Only build what changed. 34 workspace projects —{" "}
+                <InlineCode>nx affected run build</InlineCode> instead of{" "}
+                <InlineCode>next build</InlineCode> reduces build scope for
+                single-app changes.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <span className="mt-1 font-mono text-2xl font-bold text-muted-foreground">
+              5
+            </span>
+            <div>
+              <p className="font-medium text-lg text-muted-foreground">
+                Consolidate 26 regional projects → build once, configure at
+                runtime
+              </p>
+              <p className="text-muted-foreground">
+                Marcus already described this goal: "build a single binary once
+                and inject dynamic configuration at runtime." Longer-term, but
+                structurally eliminates redundant builds.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p className="mt-10 text-sm text-muted-foreground">
+          Items 1–3 are quick wins (hours to deploy). Item 4 is a medium-term
+          change. Item 5 is strategic.
+        </p>
+      </>
+    ),
+  },
   {
     slug: "feature-flags-shared-lib",
     title: (
