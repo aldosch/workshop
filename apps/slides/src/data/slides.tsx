@@ -20,7 +20,10 @@ export const CATEGORY_STYLES: Record<Category, string> = {
   Build: "text-zinc-600 dark:text-zinc-400",
 };
 
-export const TOTAL_SLIDES = 7;
+export const TOTAL_SLIDES = 8;
+
+const GH =
+  "https://github.com/aldosch/workshop/blob/main/packages/flags/examples";
 
 export const slides: Slide[] = [
   {
@@ -66,6 +69,91 @@ export const slides: Slide[] = [
         <Docs>
           <DocLink href="https://turbo.build/docs/guides/sharing-code">
             Sharing code in Turborepo
+          </DocLink>
+        </Docs>
+      </>
+    ),
+  },
+  {
+    slug: "flags-provider-switching",
+    title: <>Switching flag providers without rewriting code</>,
+    categories: ["Flags"],
+    content: (
+      <>
+        <p>
+          The Vercel Flags SDK uses an adapter pattern. You declare flags once
+          and swap the underlying provider (LaunchDarkly, Statsig, native
+          Vercel) by changing one line — the <InlineCode>adapter</InlineCode>{" "}
+          field. Consumer code never changes.
+        </p>
+
+        <p className="mt-8 font-medium text-base sm:text-lg">
+          Same flag, two providers — only the adapter line differs:
+        </p>
+
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          <div>
+            <CodeBlock
+              language="ts"
+              filename="launchdarkly.ts"
+            >{`import { flag } from "flags/next";
+import { ldAdapter } from "@flags-sdk/launchdarkly";
+
+export const newHomepage = flag<boolean>({
+  key: "new-homepage",
+  identify: identifyLD,
+  adapter: ldAdapter.variation(),
+});`}</CodeBlock>
+            <SourceLink href={`${GH}/launchdarkly.ts`} />
+          </div>
+          <div>
+            <CodeBlock
+              language="ts"
+              filename="statsig.ts"
+            >{`import { flag } from "flags/next";
+import { statsigAdapter } from "@flags-sdk/statsig";
+
+export const newHomepage = flag<boolean>({
+  key: "new_homepage",
+  identify: identifyStatsig,
+  adapter: statsigAdapter.featureGate(g => g.value),
+});`}</CodeBlock>
+            <SourceLink href={`${GH}/statsig.ts`} />
+          </div>
+        </div>
+
+        <p className="mt-8 font-medium text-base sm:text-lg">
+          Consumer code stays the same regardless of provider:
+        </p>
+        <div className="mt-4">
+          <CodeBlock
+            language="tsx"
+            filename="consume.tsx"
+          >{`import { newHomepage } from "./launchdarkly";
+// or: import { newHomepage } from "./statsig";
+
+export default async function Page() {
+  const showNew = await newHomepage();
+  return showNew ? <NewLayout /> : <DefaultLayout />;
+}`}</CodeBlock>
+          <SourceLink href={`${GH}/consume.tsx`} />
+        </div>
+
+        <p className="mt-8 text-muted-foreground">
+          The <InlineCode>identify()</InlineCode> function resolves cookies and
+          headers into a neutral <InlineCode>AppContext</InlineCode>. Each
+          provider file maps it to its own context shape (
+          <InlineCode>LDContext</InlineCode> vs{" "}
+          <InlineCode>StatsigUser</InlineCode>). That mapping is the only other
+          provider-specific code.
+        </p>
+
+        <Docs>
+          <DocLink href={`${GH}/README.md`}>Examples README</DocLink>
+          <DocLink href={`${GH}/identify.ts`}>identify.ts</DocLink>
+          <DocLink href="https://flags-sdk.dev">Flags SDK docs</DocLink>
+          <DocLink href="https://vercel.com/docs/flags/flags-explorer">
+            Flags Explorer
           </DocLink>
         </Docs>
       </>
@@ -364,5 +452,18 @@ function Docs({ children }: { children: React.ReactNode }) {
       </span>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">{children}</div>
     </div>
+  );
+}
+
+function SourceLink({ href }: { href: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="mt-1.5 inline-flex items-center gap-1 font-mono text-[11px] text-muted-foreground underline decoration-dotted underline-offset-2 transition-colors hover:text-foreground"
+    >
+      View on GitHub →
+    </a>
   );
 }
