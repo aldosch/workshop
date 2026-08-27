@@ -293,6 +293,73 @@ export const slides: Slide[] = [
     ),
   },
   {
+    slug: "build-optimisation",
+    title: <>Build optimisation with Turbo</>,
+    categories: ["Build"],
+    content: (
+      <>
+        <p>
+          Turborepo caches task outputs and runs independent tasks in parallel
+          based on the dependency graph. This monorepo already follows the main
+          best practices:
+        </p>
+        <ul className="mt-6 space-y-2">
+          <li>
+            <strong>Package tasks</strong> — each app/package has its own{" "}
+            <InlineCode>build</InlineCode>, <InlineCode>lint</InlineCode>,{" "}
+            <InlineCode>check-types</InlineCode> scripts
+          </li>
+          <li>
+            <strong>Root only delegates</strong> —{" "}
+            <InlineCode>turbo run build</InlineCode>, never{" "}
+            <InlineCode>cd apps/x && next build</InlineCode>
+          </li>
+          <li>
+            <strong>Outputs declared</strong> —{" "}
+            <InlineCode>.next/**</InlineCode> and{" "}
+            <InlineCode>dist/**</InlineCode> cached per package
+          </li>
+          <li>
+            <strong>--affected</strong> — skip unchanged packages in CI
+          </li>
+        </ul>
+        <CodeBlock
+          language="json"
+          filename="turbo.json"
+          className="mt-6"
+          highlightLines={[4]}
+        >{`{
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {},
+    "check-types": {}
+  }
+}`}</CodeBlock>
+        <p className="mt-4">
+          <InlineCode>^build</InlineCode> means{" "}
+          <InlineCode>@repo/flags</InlineCode> is ready before the apps build.
+          Since it's a JIT package (no build step), Turbo just tracks the source
+          files for cache invalidation.
+        </p>
+        <Docs>
+          <DocLink href="https://turbo.build/docs/guides/cache">
+            Turborepo caching
+          </DocLink>
+          <DocLink href="https://turbo.build/docs/guides/filter">
+            Filtering with --affected
+          </DocLink>
+        </Docs>
+      </>
+    ),
+  },
+  {
     slug: "feature-flags-shared-lib",
     title: (
       <>
@@ -653,6 +720,35 @@ jobs:
     ),
   },
   {
+    slug: "qa-pipeline-diagram",
+    title: <>Where should tests and QA agents fire?</>,
+    categories: ["QA", "Testing"],
+    content: (
+      <>
+        <p className="mb-8 text-muted-foreground">
+          Every stage in a Next.js + Turborepo monorepo on Vercel where a test
+          or QA agent can fire. Hover or tap a node to see the test types for
+          that stage.
+        </p>
+        <QaPipelineDiagram />
+        <Docs>
+          <DocLink href="https://vercel.com/docs/fundamentals/builds">
+            Vercel Builds
+          </DocLink>
+          <DocLink href="https://vercel.com/docs/deployments/environments">
+            Environments
+          </DocLink>
+          <DocLink href="https://vercel.com/docs/deployment-checks">
+            Deployment Checks
+          </DocLink>
+          <DocLink href="https://vercel.com/docs/deployments/promote-preview-to-production">
+            Promote to Production
+          </DocLink>
+        </Docs>
+      </>
+    ),
+  },
+  {
     slug: "rollouts-region",
     title: <>Region-based rollouts</>,
     categories: ["Rollout"],
@@ -723,102 +819,6 @@ export function middleware(request: NextRequest) {
           </DocLink>
           <DocLink href="https://vercel.com/docs/build-output-api/skew-protection">
             Skew Protection
-          </DocLink>
-        </Docs>
-      </>
-    ),
-  },
-  {
-    slug: "build-optimisation",
-    title: <>Build optimisation with Turbo</>,
-    categories: ["Build"],
-    content: (
-      <>
-        <p>
-          Turborepo caches task outputs and runs independent tasks in parallel
-          based on the dependency graph. This monorepo already follows the main
-          best practices:
-        </p>
-        <ul className="mt-6 space-y-2">
-          <li>
-            <strong>Package tasks</strong> — each app/package has its own{" "}
-            <InlineCode>build</InlineCode>, <InlineCode>lint</InlineCode>,{" "}
-            <InlineCode>check-types</InlineCode> scripts
-          </li>
-          <li>
-            <strong>Root only delegates</strong> —{" "}
-            <InlineCode>turbo run build</InlineCode>, never{" "}
-            <InlineCode>cd apps/x && next build</InlineCode>
-          </li>
-          <li>
-            <strong>Outputs declared</strong> —{" "}
-            <InlineCode>.next/**</InlineCode> and{" "}
-            <InlineCode>dist/**</InlineCode> cached per package
-          </li>
-          <li>
-            <strong>--affected</strong> — skip unchanged packages in CI
-          </li>
-        </ul>
-        <CodeBlock
-          language="json"
-          filename="turbo.json"
-          className="mt-6"
-          highlightLines={[4]}
-        >{`{
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "lint": {},
-    "check-types": {}
-  }
-}`}</CodeBlock>
-        <p className="mt-4">
-          <InlineCode>^build</InlineCode> means{" "}
-          <InlineCode>@repo/flags</InlineCode> is ready before the apps build.
-          Since it's a JIT package (no build step), Turbo just tracks the source
-          files for cache invalidation.
-        </p>
-        <Docs>
-          <DocLink href="https://turbo.build/docs/guides/cache">
-            Turborepo caching
-          </DocLink>
-          <DocLink href="https://turbo.build/docs/guides/filter">
-            Filtering with --affected
-          </DocLink>
-        </Docs>
-      </>
-    ),
-  },
-  {
-    slug: "qa-pipeline-diagram",
-    title: <>Where should tests and QA agents fire?</>,
-    categories: ["QA", "Testing"],
-    content: (
-      <>
-        <p className="mb-8 text-muted-foreground">
-          Every stage in a Next.js + Turborepo monorepo on Vercel where a test
-          or QA agent can fire. Hover or tap a node to see the test types for
-          that stage.
-        </p>
-        <QaPipelineDiagram />
-        <Docs>
-          <DocLink href="https://vercel.com/docs/fundamentals/builds">
-            Vercel Builds
-          </DocLink>
-          <DocLink href="https://vercel.com/docs/deployments/environments">
-            Environments
-          </DocLink>
-          <DocLink href="https://vercel.com/docs/deployment-checks">
-            Deployment Checks
-          </DocLink>
-          <DocLink href="https://vercel.com/docs/deployments/promote-preview-to-production">
-            Promote to Production
           </DocLink>
         </Docs>
       </>
