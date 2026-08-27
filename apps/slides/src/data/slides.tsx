@@ -658,11 +658,7 @@ jobs:
     categories: ["Rollout"],
     content: (
       <>
-        <p>
-          Deploy to a specific region first, then expand. Vercel's Edge Network
-          lets you target by geography, so you can validate in a low-risk market
-          before going global.
-        </p>
+        <p>Deploy to a specific region first, then expand.</p>
         <p className="mt-6">
           Pair this with feature flags: serve the new version to one region
           while the rest of the world gets the stable build.
