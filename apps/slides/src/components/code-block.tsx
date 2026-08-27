@@ -92,11 +92,8 @@ export async function CodeBlock({
       )}
       <div
         className={cn(
-          "shiki-wrapper overflow-x-auto px-4 py-3 font-mono text-[13px] leading-relaxed",
+          "shiki-wrapper overflow-x-auto py-3 font-mono text-[13px] leading-relaxed",
           "[&_pre]:!bg-transparent [&_pre]:m-0 [&_pre]:p-0 [&_code]:!bg-transparent [&_span]:!bg-transparent",
-          "[&_[data-highlight='true']]:rounded-l-sm [&_[data-highlight='true']]:-mx-4 [&_[data-highlight='true']]:px-4",
-          "[&_[data-highlight='true']]:bg-amber-500/10 dark:[&_[data-highlight='true']]:bg-amber-400/10",
-          "[&_[data-highlight='true']]:border-l-2 [&_[data-highlight='true']]:border-amber-500 dark:[&_[data-highlight='true']]:border-amber-400",
         )}
         // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki output is sanitized HTML.
         dangerouslySetInnerHTML={{ __html: html }}

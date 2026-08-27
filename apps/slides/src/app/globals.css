@@ -212,3 +212,32 @@
     text-decoration: var(--shiki-dark-text-decoration);
   }
 }
+
+/* Line highlighting.
+   Shiki emits inline `<span class="line">` elements, so they must be made
+   block-level for a full-row background. Horizontal padding lives on the
+   lines (not the wrapper) so highlighted rows bleed edge to edge, and
+   min-width keeps the highlight filling horizontally-scrolled blocks. */
+:root {
+  --code-highlight: oklch(0.62 0.15 155);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --code-highlight: oklch(0.74 0.16 155);
+  }
+}
+
+.shiki-wrapper code {
+  display: inline-block;
+  min-width: 100%;
+}
+
+.shiki-wrapper .line {
+  display: block;
+  padding-inline: 1rem;
+}
+
+.shiki-wrapper .line[data-highlight="true"] {
+  background: color-mix(in oklch, var(--code-highlight) 14%, transparent);
+  box-shadow: inset 2px 0 0 var(--code-highlight);
+}

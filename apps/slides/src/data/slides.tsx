@@ -21,7 +21,7 @@ export const CATEGORY_STYLES: Record<Category, string> = {
   Build: "text-zinc-600 dark:text-zinc-400",
 };
 
-export const TOTAL_SLIDES = 12;
+export const TOTAL_SLIDES = 13;
 
 const GH =
   "https://github.com/aldosch/workshop/blob/main/packages/flags/examples";
@@ -535,6 +535,98 @@ test("homepage matches baseline", async ({ page }) => {
         <Docs>
           <DocLink href="https://playwright.dev/docs/api/class-locatorassertions#locator-assertions-to-have-screenshot">
             Playwright visual comparisons
+          </DocLink>
+        </Docs>
+      </>
+    ),
+  },
+  {
+    slug: "journey-diff-agent-browser",
+    title: <>Journey-level visual diffing with Vercel Sandbox</>,
+    categories: ["Testing", "QA"],
+    content: (
+      <>
+        <p className="mt-6">
+          Page screenshots catch layout shifts on a single URL.{" "}
+          <strong>Journey diffing</strong> catches regressions across a full
+          customer flow — login → consultation → save — which is where Heidi's
+          enterprise customers are most sensitive to change.
+        </p>
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-lg border p-5">
+            <p className="font-medium">MVP (now)</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Playwright <InlineCode>toHaveScreenshot()</InlineCode> on static
+              pages. Fits your existing E2E suite. No new infra.
+            </p>
+          </div>
+          <div className="rounded-lg border border-sky-500/30 bg-sky-500/5 p-5">
+            <p className="font-medium text-sky-600 dark:text-sky-400">
+              Phase 2 (Sept)
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              <InlineCode>vercel-labs/agent-browser</InlineCode> drives a real
+              browser through multi-step journeys and diffs each step — pixel
+              and DOM. Runs on <strong>Vercel Sandbox</strong>.
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-8 font-medium">Why agent-browser for Heidi</p>
+        <ul className="mt-3 space-y-2">
+          <li>
+            <strong>Vercel-native</strong> — runs on Vercel Sandbox, same
+            platform you're already investing in. No third-party vendor.
+          </li>
+          <li>
+            <strong>Journey-level diffs</strong> — a CSS change on login that
+            shifts layout on the consultation page two steps later. Page
+            screenshots miss this; journey diffs catch it.
+          </li>
+          <li>
+            <strong>Agent-ready</strong> — MCP tools mean a Vercel Agent can run
+            these diffs in PR review automatically. The agent clicks, fills,
+            navigates, and reports back with a before/after diff image.
+          </li>
+          <li>
+            <strong>Compliance evidence</strong> — deterministic, repeatable
+            journey proof is exactly what NHS trust-level change management
+            needs: "here's evidence the consult flow looks identical before and
+            after this change."
+          </li>
+        </ul>
+
+        <CodeBlock
+          language="bash"
+          filename="journey-diff.sh"
+          className="mt-6"
+          highlightLines={[1, 8, 9, 10]}
+        >{`agent-browser diff url \\
+  https://scribe.heidihealth.com \\
+  https://scribe-fe-v2-pr-123.vercel.app \\
+  --journey journeys/scribe-consult.ts
+
+# Each step returns:
+#   matched: true/false
+#   diff_image: visual diff (boxed regions)
+#   dimension_mismatch: viewport check`}</CodeBlock>
+
+        <p className="mt-6 text-muted-foreground">
+          Built-in diff actions: <InlineCode>diff url</InlineCode>,{" "}
+          <InlineCode>diff screenshot</InlineCode>,{" "}
+          <InlineCode>diff snapshot</InlineCode> (DOM-level, Myers algorithm).
+          Full interactivity: <InlineCode>click</InlineCode>,{" "}
+          <InlineCode>fill</InlineCode>, <InlineCode>type</InlineCode>,{" "}
+          <InlineCode>select</InlineCode>, <InlineCode>scroll</InlineCode>.
+        </p>
+
+        <Docs>
+          <DocLink href="https://github.com/vercel-labs/agent-browser">
+            vercel-labs/agent-browser
+          </DocLink>
+          <DocLink href="https://vercel.com/docs/sandbox">
+            Vercel Sandbox
           </DocLink>
         </Docs>
       </>
