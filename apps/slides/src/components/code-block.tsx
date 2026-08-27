@@ -8,6 +8,7 @@ interface CodeBlockProps {
   filename?: string;
   children: string;
   className?: string;
+  highlightLines?: number[];
 }
 
 const SUPPORTED_LANGS = new Set<BundledLanguage>([
@@ -40,15 +41,29 @@ export async function CodeBlock({
   filename,
   children,
   className,
+  highlightLines,
 }: CodeBlockProps) {
   const code = children.replace(/\n$/, "");
+  const lang = resolveLang(language);
   const html = await codeToHtml(code, {
-    lang: resolveLang(language),
+    lang,
     themes: {
       light: "github-light",
       dark: "github-dark",
     },
     defaultColor: false,
+    transformers: highlightLines
+      ? [
+          {
+            line(node, line) {
+              if (highlightLines.includes(line)) {
+                node.properties = node.properties || {};
+                node.properties["data-highlight"] = "true";
+              }
+            },
+          },
+        ]
+      : [],
   });
 
   const hasHeader = Boolean(filename);
@@ -79,6 +94,9 @@ export async function CodeBlock({
         className={cn(
           "shiki-wrapper overflow-x-auto px-4 py-3 font-mono text-[13px] leading-relaxed",
           "[&_pre]:!bg-transparent [&_pre]:m-0 [&_pre]:p-0 [&_code]:!bg-transparent [&_span]:!bg-transparent",
+          "[&_[data-highlight='true']]:rounded-l-sm [&_[data-highlight='true']]:-mx-4 [&_[data-highlight='true']]:px-4",
+          "[&_[data-highlight='true']]:bg-amber-500/10 dark:[&_[data-highlight='true']]:bg-amber-400/10",
+          "[&_[data-highlight='true']]:border-l-2 [&_[data-highlight='true']]:border-amber-500 dark:[&_[data-highlight='true']]:border-amber-400",
         )}
         // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki output is sanitized HTML.
         dangerouslySetInnerHTML={{ __html: html }}

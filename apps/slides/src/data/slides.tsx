@@ -1,4 +1,5 @@
 import { flagDefinitions } from "@repo/flags";
+import { BuildUsageChart } from "@/components/build-usage-chart";
 import { CodeBlock, InlineCode } from "@/components/code-block";
 import { DocLink } from "@/components/doc-link";
 import { QaPipelineDiagram } from "@/components/qa-pipeline-diagram";
@@ -38,8 +39,8 @@ export const slides: Slide[] = [
               $13.4k on builds this month
             </p>
             <p className="mt-3 text-lg text-muted-foreground">
-              One project — <InlineCode>scribe-fe-v2-dev</InlineCode> — accounts
-              for <strong className="text-foreground">$11.3k</strong> of that.
+              One project, <InlineCode>scribe-fe-v2-dev</InlineCode>, is{" "}
+              <strong className="text-foreground">$11.3k</strong> of that alone.
             </p>
           </div>
           <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 px-6 py-4 text-center">
@@ -100,18 +101,26 @@ export const slides: Slide[] = [
           </table>
         </div>
 
+        <div className="mt-8">
+          <p className="mb-3 font-mono text-xs text-muted-foreground uppercase tracking-wider">
+            Monthly build CPU cost — Mar to Aug 2026
+          </p>
+          <BuildUsageChart />
+        </div>
+
         <p className="mt-8 text-muted-foreground">
           Build CPU was{" "}
-          <strong className="text-foreground">$0 every day</strong> from March 1
-          through April 26. First non-zero day:{" "}
-          <InlineCode>2026-04-27</InlineCode>. Sustained ~640 MIUs/day since.
+          <strong className="text-foreground">$0 every day</strong> from March
+          through April 26. Then something changed on{" "}
+          <InlineCode>2026-04-27</InlineCode>, and it's been running ~640
+          MIUs/day since.
         </p>
       </>
     ),
   },
   {
     slug: "build-cost-why",
-    title: <>Build minutes: why is it so expensive?</>,
+    title: <>Build minutes: why?</>,
     categories: ["Build"],
     content: (
       <>
@@ -119,27 +128,27 @@ export const slides: Slide[] = [
           <div className="space-y-1">
             <p className="font-medium text-lg">12 GB heap</p>
             <p className="text-muted-foreground">
-              <InlineCode>--max-old-space-size=12228</InlineCode> forces the
-              highest-memory build tier (30 cores / 60 GB). CPU minutes are
-              billed by tier. Baked into{" "}
-              <InlineCode>scripts/build-next.ts</InlineCode> — a repo change,
-              not a dashboard toggle.
+              <InlineCode>--max-old-space-size=12228</InlineCode> puts builds on
+              the highest-memory tier (30 cores / 60 GB). CPU minutes are billed
+              by tier, so this alone is a massive multiplier. It's baked into{" "}
+              <InlineCode>scripts/build-next.ts</InlineCode> in the repo, not a
+              dashboard setting.
             </p>
           </div>
           <div className="space-y-1">
             <p className="font-medium text-lg">No build cache</p>
             <p className="text-muted-foreground">
-              <InlineCode>VERCEL_FORCE_NO_BUILD_CACHE</InlineCode> is set on dev
-              projects. Every build downloads 14,828 files and reinstalls 2,719
-              packages from scratch. ~10.5 min per build, all cold.
+              <InlineCode>VERCEL_FORCE_NO_BUILD_CACHE</InlineCode> is set on the
+              dev projects. Every build downloads 14,828 files and reinstalls
+              2,719 packages from scratch. All cold, every time.
             </p>
           </div>
           <div className="space-y-1">
             <p className="font-medium text-lg">100 pushes in 2 hours</p>
             <p className="text-muted-foreground">
-              29 authors merging PRs continuously. Up to 6 concurrent builds.
-              Every push triggers a full 12 GB, 10-minute build — no ignored
-              build step configured.
+              29 authors merging PRs continuously, up to 6 concurrent builds at
+              once. No ignored build step, so even a markdown edit triggers a
+              full 12 GB, 10-minute build.
             </p>
           </div>
           <div className="space-y-1">
@@ -147,28 +156,41 @@ export const slides: Slide[] = [
               No <InlineCode>nx affected</InlineCode>
             </p>
             <p className="text-muted-foreground">
-              Build command is <InlineCode>next build</InlineCode>, not{" "}
+              The build runs <InlineCode>next build</InlineCode> directly, not{" "}
               <InlineCode>nx affected run build</InlineCode>. 34 workspace
-              projects, 3,570 static pages — all compiled every time even when
-              one app changed.
+              projects, 3,570 static pages, all compiled even when one app
+              changed.
             </p>
           </div>
         </div>
 
-        <div className="mt-8 rounded-lg border border-amber-500/20 bg-amber-500/5 p-5">
+        <p className="mt-8 text-muted-foreground">
+          Builds run on{" "}
+          <DocLink href="https://vercel.com/docs/builds/elastic-build-machines">
+            Elastic Build Machines
+          </DocLink>{" "}
+          — Vercel's scalable build infrastructure that provisions build
+          instances on demand. The 12 GB heap requests the{" "}
+          <InlineCode>Turbo</InlineCode> tier (30 cores / 60 GB), which is the
+          most expensive instance type. CPU minutes are billed by tier × CPU
+          time consumed.
+        </p>
+
+        <div className="mt-6 rounded-lg border border-amber-500/20 bg-amber-500/5 p-5">
           <p className="text-sm text-muted-foreground">
-            <strong className="text-foreground">Build timeline</strong> (recent
-            production build): install ~16s · compile/bundle ~5.8 min (where 12
-            GB is consumed) · static pages ~62s · sourcemaps ~207s ={" "}
+            <strong className="text-foreground">Build timeline</strong> from a
+            recent production build: install ~16s · compile/bundle ~5.8 min
+            (this is where the 12 GB gets consumed) · static pages ~62s ·
+            sourcemaps ~207s ={" "}
             <strong className="text-foreground">~10.7 min total</strong>
           </p>
         </div>
 
         <p className="mt-6 text-muted-foreground">
-          91 projects total, 26+ are <InlineCode>scribe-fe-v2</InlineCode>{" "}
-          variants across regions. But only <InlineCode>-dev</InlineCode> builds
-          on every push — prod/staging variants consume ~36 MIUs each (350×
-          less).
+          There are 91 projects on this team and 26+ are{" "}
+          <InlineCode>scribe-fe-v2</InlineCode> variants across regions. But the
+          prod/staging variants only build on merges (~36 MIUs each, 350× less).
+          The dev project building on every push is the problem.
         </p>
       </>
     ),
@@ -189,9 +211,9 @@ export const slides: Slide[] = [
                 Remove <InlineCode>VERCEL_FORCE_NO_BUILD_CACHE</InlineCode>
               </p>
               <p className="text-muted-foreground">
-                Single safest win. Enables build cache for dev — skips redundant
-                install + compilation for unchanged code. Zero OOM risk. Could
-                cut dev build time by 50–70% for incremental pushes.
+                Safest win available. Lets dev builds use the cache, skipping
+                redundant install and compilation for unchanged code. No OOM
+                risk. Could cut dev build time by 50–70% on incremental pushes.
               </p>
             </div>
           </div>
@@ -205,10 +227,10 @@ export const slides: Slide[] = [
                 Test <InlineCode>--max-old-space-size=8192</InlineCode>
               </p>
               <p className="text-muted-foreground">
-                If the build completes at 8 GB, it moves to a cheaper instance
-                tier (~30–40% cost reduction). No OOM errors in recent failed
-                builds — 12 GB may be historical. Test on a preview deployment
-                first.
+                If the build completes at 8 GB, it drops to a cheaper instance
+                tier (~30–40% cost reduction). No OOM errors in any recent
+                failed build, so 12 GB may be historical. Try it on a preview
+                deployment first.
               </p>
             </div>
           </div>
@@ -223,8 +245,8 @@ export const slides: Slide[] = [
                 Skip builds for <InlineCode>*.md</InlineCode>,{" "}
                 <InlineCode>*.test.*</InlineCode>,{" "}
                 <InlineCode>docs/</InlineCode>,{" "}
-                <InlineCode>.storybook/</InlineCode>. Could eliminate 20–40% of
-                builds triggered by non-functional changes.
+                <InlineCode>.storybook/</InlineCode>. Would cut 20–40% of builds
+                that are just non-functional changes.
               </p>
             </div>
           </div>
@@ -235,13 +257,12 @@ export const slides: Slide[] = [
             </span>
             <div>
               <p className="font-medium text-lg">
-                Add <InlineCode>nx affected</InlineCode> to the build command
+                Switch to <InlineCode>nx affected</InlineCode>
               </p>
               <p className="text-muted-foreground">
-                Only build what changed. 34 workspace projects —{" "}
-                <InlineCode>nx affected run build</InlineCode> instead of{" "}
-                <InlineCode>next build</InlineCode> reduces build scope for
-                single-app changes.
+                Only build what changed. 34 workspace projects means{" "}
+                <InlineCode>nx affected run build</InlineCode> could skip most
+                of the compile work when a single app or package changed.
               </p>
             </div>
           </div>
@@ -252,21 +273,21 @@ export const slides: Slide[] = [
             </span>
             <div>
               <p className="font-medium text-lg text-muted-foreground">
-                Consolidate 26 regional projects → build once, configure at
+                Consolidate 26 regional projects, build once, configure at
                 runtime
               </p>
               <p className="text-muted-foreground">
-                Marcus already described this goal: "build a single binary once
-                and inject dynamic configuration at runtime." Longer-term, but
-                structurally eliminates redundant builds.
+                Marcus already described where this should go: "build a single
+                binary once and inject dynamic configuration at runtime." Bigger
+                change, but it structurally eliminates the redundant builds.
               </p>
             </div>
           </div>
         </div>
 
         <p className="mt-10 text-sm text-muted-foreground">
-          Items 1–3 are quick wins (hours to deploy). Item 4 is a medium-term
-          change. Item 5 is strategic.
+          1–3 are quick wins you can ship in hours. 4 is medium-term. 5 is
+          strategic.
         </p>
       </>
     ),
@@ -282,14 +303,14 @@ export const slides: Slide[] = [
     content: (
       <>
         <p>
-          All flags live in <InlineCode>packages/flags</InlineCode> — a single
-          source of truth that both apps import. Definitions are type-safe via{" "}
-          <InlineCode>as const satisfies</InlineCode>, so adding a flag here
-          makes TypeScript enforce it everywhere.
+          Both apps import flags from <InlineCode>packages/flags</InlineCode>.
+          Definitions use <InlineCode>as const satisfies</InlineCode>, so adding
+          a flag here makes TypeScript enforce it everywhere it's consumed.
         </p>
         <CodeBlock
           language="ts"
           filename="packages/flags/src/flags.ts"
+          highlightLines={[1, 8]}
         >{`export const flagDefinitions = {
   newHomepage: {
     description: "Redesigned homepage with new layout",
@@ -305,11 +326,11 @@ export const slides: Slide[] = [
   },
 } as const satisfies Record<string, FlagDefinition>;`}</CodeBlock>
         <p>
-          Resolution order: environment variable override (
-          <InlineCode>FLAGS_NEW_HOMEPAGE=true</InlineCode>) then default value.
-          The server evaluates flags and passes resolved booleans to the client
-          via <InlineCode>&lt;FlagsProvider&gt;</InlineCode> — the client never
-          sees <InlineCode>process.env</InlineCode>.
+          Resolution order: <InlineCode>FLAGS_NEW_HOMEPAGE=true</InlineCode> env
+          override, then the default value. The server evaluates and passes
+          resolved booleans to the client via{" "}
+          <InlineCode>&lt;FlagsProvider&gt;</InlineCode>. The client never
+          touches <InlineCode>process.env</InlineCode>.
         </p>
         <Docs>
           <DocLink href="https://turbo.build/docs/guides/sharing-code">
@@ -327,13 +348,12 @@ export const slides: Slide[] = [
       <>
         <p>
           The Vercel Flags SDK uses an adapter pattern. You declare flags once
-          and swap the underlying provider (LaunchDarkly, Statsig, native
-          Vercel) by changing one line — the <InlineCode>adapter</InlineCode>{" "}
-          field. Consumer code never changes.
+          and swap the provider by changing one line. Consumer code doesn't
+          change.
         </p>
 
         <p className="mt-8 font-medium text-base sm:text-lg">
-          Same flag, two providers — only the adapter line differs:
+          Same flag, two providers. The highlighted line is the only difference:
         </p>
 
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
@@ -341,6 +361,7 @@ export const slides: Slide[] = [
             <CodeBlock
               language="ts"
               filename="launchdarkly.ts"
+              highlightLines={[6]}
             >{`import { flag } from "flags/next";
 import { ldAdapter } from "@flags-sdk/launchdarkly";
 
@@ -355,6 +376,7 @@ export const newHomepage = flag<boolean>({
             <CodeBlock
               language="ts"
               filename="statsig.ts"
+              highlightLines={[6]}
             >{`import { flag } from "flags/next";
 import { statsigAdapter } from "@flags-sdk/statsig";
 
@@ -374,6 +396,7 @@ export const newHomepage = flag<boolean>({
           <CodeBlock
             language="tsx"
             filename="consume.tsx"
+            highlightLines={[3, 5]}
           >{`import { newHomepage } from "./launchdarkly";
 // or: import { newHomepage } from "./statsig";
 
@@ -385,12 +408,11 @@ export default async function Page() {
         </div>
 
         <p className="mt-8 text-muted-foreground">
-          The <InlineCode>identify()</InlineCode> function resolves cookies and
-          headers into a neutral <InlineCode>AppContext</InlineCode>. Each
-          provider file maps it to its own context shape (
-          <InlineCode>LDContext</InlineCode> vs{" "}
-          <InlineCode>StatsigUser</InlineCode>). That mapping is the only other
-          provider-specific code.
+          <InlineCode>identify()</InlineCode> resolves cookies and headers into
+          a neutral <InlineCode>AppContext</InlineCode>. Each provider file maps
+          it to its own context shape ( <InlineCode>LDContext</InlineCode> vs{" "}
+          <InlineCode>StatsigUser</InlineCode>). That mapping and the adapter
+          line are the only provider-specific code.
         </p>
 
         <Docs>
@@ -411,15 +433,14 @@ export default async function Page() {
     content: (
       <>
         <p>
-          Catch unintended UI changes before they ship. Visual regression tools
-          snapshot your pages and diff them against a baseline — pixel-level
-          changes that unit tests miss.
+          Visual regression tools snapshot your pages and diff them against a
+          baseline. They catch pixel-level changes that unit tests miss.
         </p>
-        <p className="mt-6">Popular options for Next.js:</p>
+        <p className="mt-6">Options for Next.js:</p>
         <ul className="mt-3 space-y-2">
           <li>
-            <strong>Playwright</strong> + screenshot comparison — built-in,{" "}
-            <InlineCode>toHaveScreenshot()</InlineCode>
+            <strong>Playwright</strong> —{" "}
+            <InlineCode>toHaveScreenshot()</InlineCode>, built in
           </li>
           <li>
             <strong>Chromatic</strong> — hosted visual review for Storybook
@@ -432,6 +453,7 @@ export default async function Page() {
           language="ts"
           filename="e2e/visual.spec.ts"
           className="mt-6"
+          highlightLines={[5]}
         >{`import { test, expect } from "@playwright/test";
 
 test("homepage matches baseline", async ({ page }) => {
@@ -441,7 +463,7 @@ test("homepage matches baseline", async ({ page }) => {
   });
 });`}</CodeBlock>
         <p className="mt-4">
-          Run with{" "}
+          Run{" "}
           <InlineCode>pnpm exec playwright test --update-snapshots</InlineCode>{" "}
           to refresh the baseline after an intentional change.
         </p>
@@ -460,9 +482,8 @@ test("homepage matches baseline", async ({ page }) => {
     content: (
       <>
         <p>
-          A robust QA pipeline runs checks on every pull request before merge.
-          The monorepo structure lets Turbo cache and parallelise these across
-          packages.
+          A QA pipeline runs checks on every PR before merge. Turbo caches and
+          parallelises them across packages.
         </p>
         <p className="mt-6">Core checks:</p>
         <ul className="mt-3 space-y-2">
@@ -471,8 +492,7 @@ test("homepage matches baseline", async ({ page }) => {
             <InlineCode>tsc --noEmit</InlineCode> per package
           </li>
           <li>
-            <strong>Linting</strong> — Biome for fast, unified formatting and
-            linting
+            <strong>Linting</strong> — Biome, fast and unified
           </li>
           <li>
             <strong>Unit tests</strong> — Vitest or Jest, cached by Turbo
@@ -488,6 +508,7 @@ test("homepage matches baseline", async ({ page }) => {
           language="yaml"
           filename=".github/workflows/ci.yml"
           className="mt-6"
+          highlightLines={[11]}
         >{`name: CI
 on: [pull_request]
 
@@ -506,8 +527,8 @@ jobs:
       - run: pnpm run check-types
       - run: pnpm run build --affected`}</CodeBlock>
         <p className="mt-4">
-          The <InlineCode>--affected</InlineCode> flag skips packages that
-          haven't changed, cutting CI time dramatically.
+          <InlineCode>--affected</InlineCode> skips packages that haven't
+          changed, which cuts CI time significantly.
         </p>
       </>
     ),
@@ -519,19 +540,19 @@ jobs:
     content: (
       <>
         <p>
-          Deploy to specific regions first, then expand globally. Vercel's Edge
-          Network lets you target by geography so you can validate in a low-risk
-          market before full rollout.
+          Deploy to a specific region first, then expand. Vercel's Edge Network
+          lets you target by geography, so you can validate in a low-risk market
+          before going global.
         </p>
         <p className="mt-6">
-          Combine with feature flags: serve the new version only to requests
-          from a specific region while the rest of the world sees the stable
-          version.
+          Pair this with feature flags: serve the new version to one region
+          while the rest of the world gets the stable build.
         </p>
         <CodeBlock
           language="ts"
           filename="middleware.ts"
           className="mt-6"
+          highlightLines={[7, 8, 9]}
         >{`import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -562,23 +583,23 @@ export function middleware(request: NextRequest) {
         <p>
           Canary deployments route a small percentage of traffic to the new
           version. If error rates spike, auto-rollback reverts to the previous
-          deployment without manual intervention.
+          deployment without anyone having to intervene.
         </p>
         <p className="mt-6">
-          Vercel provides this out of the box with{" "}
-          <strong>Skew Protection</strong> and <strong>Rollbacks</strong> —
-          one-click or automated revert to any prior deployment.
+          Vercel gives you this out of the box with{" "}
+          <strong>Skew Protection</strong> and <strong>Rollbacks</strong>.
+          One-click or automated revert to any prior deployment.
         </p>
         <div className="mt-8 rounded-lg border border-amber-500/20 bg-amber-500/5 p-6">
           <p className="font-medium text-sm uppercase tracking-wider text-amber-600 dark:text-amber-400">
             Verify it worked
           </p>
           <p className="mt-3 text-muted-foreground">
-            After a canary deploy, monitor the{" "}
-            <InlineCode>/overview</InlineCode> tab in your Vercel project. If
-            function error rate exceeds your threshold, click{" "}
-            <strong>Rollback</strong> or let the automated monitor revert. The
-            previous deployment is promoted instantly — no rebuild required.
+            After a canary deploy, watch the <InlineCode>/overview</InlineCode>{" "}
+            tab in your Vercel project. If function error rate crosses your
+            threshold, hit <strong>Rollback</strong> or let the automated
+            monitor handle it. The previous deployment is promoted instantly, no
+            rebuild needed.
           </p>
         </div>
         <Docs>
@@ -600,12 +621,12 @@ export function middleware(request: NextRequest) {
       <>
         <p>
           Turborepo caches task outputs and runs independent tasks in parallel
-          based on the dependency graph. The monorepo is already configured with
+          based on the dependency graph. This monorepo already follows the main
           best practices:
         </p>
         <ul className="mt-6 space-y-2">
           <li>
-            <strong>Package tasks</strong> — each app/package defines its own{" "}
+            <strong>Package tasks</strong> — each app/package has its own{" "}
             <InlineCode>build</InlineCode>, <InlineCode>lint</InlineCode>,{" "}
             <InlineCode>check-types</InlineCode> scripts
           </li>
@@ -623,7 +644,12 @@ export function middleware(request: NextRequest) {
             <strong>--affected</strong> — skip unchanged packages in CI
           </li>
         </ul>
-        <CodeBlock language="json" filename="turbo.json" className="mt-6">{`{
+        <CodeBlock
+          language="json"
+          filename="turbo.json"
+          className="mt-6"
+          highlightLines={[4]}
+        >{`{
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -638,9 +664,9 @@ export function middleware(request: NextRequest) {
   }
 }`}</CodeBlock>
         <p className="mt-4">
-          The <InlineCode>^build</InlineCode> dependency ensures{" "}
-          <InlineCode>@repo/flags</InlineCode> is ready before apps build. Since
-          it's a JIT package (no build step), Turbo simply tracks the source
+          <InlineCode>^build</InlineCode> means{" "}
+          <InlineCode>@repo/flags</InlineCode> is ready before the apps build.
+          Since it's a JIT package (no build step), Turbo just tracks the source
           files for cache invalidation.
         </p>
         <Docs>
@@ -661,9 +687,9 @@ export function middleware(request: NextRequest) {
     content: (
       <>
         <p className="mb-8 text-muted-foreground">
-          Every stage where a test or QA agent could fire in a Next.js +
-          Turborepo monorepo on Vercel. Hover or tap a node to see the test
-          types that belong there.
+          Every stage in a Next.js + Turborepo monorepo on Vercel where a test
+          or QA agent can fire. Hover or tap a node to see the test types for
+          that stage.
         </p>
         <QaPipelineDiagram />
         <Docs>
