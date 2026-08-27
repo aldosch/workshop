@@ -1,0 +1,152 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  background: #fafafa;
+  color: #111;
+  line-height: 1.6;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #0a0a0a;
+    color: #eee;
+  }
+}
+
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 0.875rem;
+  margin-bottom: 2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .subtitle {
+    color: #999;
+  }
+}
+
+.card {
+  border: 1px solid #e5e5e5;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .card {
+    border-color: #222;
+  }
+}
+
+.flag-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.flag-name {
+  font-family: ui-monospace, monospace;
+  font-size: 0.875rem;
+}
+
+.flag-desc {
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 0.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .flag-desc {
+    color: #777;
+  }
+}
+
+.badge {
+  font-family: ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+}
+
+.badge-on {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-off {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-on {
+    background: #052e16;
+    color: #86efac;
+  }
+  .badge-off {
+    background: #1f1f1f;
+    color: #6b7280;
+  }
+}
+
+.label {
+  font-size: 0.7rem;
+  font-family: ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .label {
+    color: #777;
+  }
+}
+
+code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+  background: #f3f4f6;
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  code {
+    background: #1f1f1f;
+  }
+}
+
+.feature {
+  border-left: 3px solid #6366f1;
+  padding-left: 1rem;
+  margin-top: 0.5rem;
+}
